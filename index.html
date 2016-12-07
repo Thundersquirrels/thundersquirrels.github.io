@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript">
+    var dungeonRPG = function(){
+var playerName = prompt("Welcome adventurer, what is your name?");
+var battle = 0;
+var currentDamage = 0;
+var nextDamage = 0;
+var overkill = 0;
+var overHeal = 0;
+var overMana = 0;
+var critChanceVar = 0;
+var critChance = 0;
+var player = 0;
+var playerAttackA = 0;
+var playerAttackB = 0;
+var playerSpecialAttack = 0;
+var typePlayerAttack = 0;
+var rangerSpecialAttackRandomInt = 0;
+var classDecision = true;
+var actionChoice = true;
+var currentEnemy = 0;
+var nextEnemy = 0;
+var i = 0;
+var battleDifficulty = 0;
+var enemyDifficultyVar = 0.1;
+var enemyDifficulty = 0;
+var enemyDifficultyChoice = 0;
+var playerAlive = true;
+var enemyKillCounter = 0;
+var facingEnemy = false;
+var bossBattle = false;
+var playerEXP = 0;
+var levelEXP = 5;
+var levelEXPvar = 5;
+var levelEXPvarvar = 0;
+var playerLevel = 1;
+var playerGold = 0;
+var enemyEXPdrop = 0;
+var enemyGoldDrop = 0;
+var itemsInBag = 0;
+var bag = [];
+var bossBattles = [10, 25, 40, 50, 60, 75, 90, 99, 100];
+var randomInt = function(min69, max69) {
+min69 = Math.ceil(min69);
+max69 = Math.floor(max69);
+return Math.floor(Math.random() * (max69 - min69 + 1)) + min69;
+};
+var roundInt = function(unroundedNumber){
+  if((unroundedNumber - Math.floor(unroundedNumber)) >= 0.5){
+      return Math.ceil(unroundedNumber);
+  } else {
+      return Math.floor(unroundedNumber);
+  }
+};
+var Class = function(playerHealthRegen, playerMaxHealth, playerAttack, playerDefense, playerMaxMana, playerManaRegen, player) {
+  this.playerHealthRegen = playerHealthRegen;
+  this.playerMaxHealth = playerMaxHealth;
+  this.playerHealth = playerMaxHealth;
+  this.playerAttack = playerAttack;
+  this.playerDefense = playerDefense;
+  this.playerBlock = playerDefense;
+  this.playerMaxMana = playerMaxMana;
+  this.playerMana = playerMaxMana;
+  this.playerManaRegen = playerManaRegen;
+  this.player = player;
+};
+var Enemy = function(enemyHealthRegen, enemyMaxHealth, enemyAttack, enemyDefense, enemyCritChanceMultiplier, enemyCritDamageMultiplier, enemySpecialAttack, enemyName, enemySpecialAttackName){
+  this.enemyHealthRegen = enemyHealthRegen;
+  this.enemyMaxHealth = enemyMaxHealth;
+  this.enemyHealth = this.enemyMaxHealth;
+  this.enemyAttack = enemyAttack;
+  this.enemyDefense = enemyDefense;
+  this.enemyBlock = this.enemyDefense;
+  this.enemyCritChanceMultiplier = enemyCritChanceMultiplier;
+  this.enemyCritDamageMultiplier = enemyCritDamageMultiplier;
+  this.enemySpecialAttack = enemySpecialAttack;
+  this.enemyName = enemyName;
+  this.enemySpecialAttackName = enemySpecialAttackName;
+  facingEnemy = true;
+};
+var playerAttack = function(critChanceMultiplier, critDamageMultiplier, playerAttackMana, playerAttackName){
+  this.critChanceMultiplier = critChanceMultiplier;
+  this.critDamageMultiplier = critDamageMultiplier;
+  this.playerAttackMana = playerAttackMana;
+  this.playerAttackName = playerAttackName;
+};
+var playerSpecialAttack = function(critChanceMultiplier, critDamageMultiplier, playerSpecialAttackClass, playerSpecialAttackMana, playerSpecialAttackName){
+  this.critChanceMultiplier = critChanceMultiplier;
+  this.critDamageMultiplier = critDamageMultiplier;
+  this.playerSpecialAttackClass = playerSpecialAttackClass;
+  this.playerSpecialAttackMana = playerSpecialAttackMana;
+  this.playerSpecialAttackName = playerSpecialAttackName;
+};
+var chooseClass = function(){
+while(classDecision){
+  var playerClass = prompt("Choose a class, " + playerName + ": Warrior, Ranger, or Cleric");
+  switch(playerClass){
+      case("Warrior"):
+      case("warrior"):
+      case("1"):
+          player = new Class(0, 20, 5, 7, 10, 1, "warrior");
+          playerAttackA = new playerAttack(0, 1.5, 0, "stab");
+          playerAttackB = new playerAttack(1, 2.5, 2, "charge");
+          playerSpecialAttack = new playerSpecialAttack(99999, 4.5, 1, 5, "whirlwind");
+          classDecision = false;
+          break;
+      case("Ranger"):
+      case("ranger"):
+      case("2"):
+          player = new Class(0, 10, 10, 6, 5, 2, "ranger");
+          playerAttackA = new playerAttack(0, 1.5, 1, "shoot");
+          playerAttackB = new playerAttack(1.5, 2, 2, "snipe");
+          playerSpecialAttack = new playerSpecialAttack(0.75, 1.5, 2, 5, "multi-shot");
+          classDecision = false;
+          break;
+      case("Cleric"):
+      case("cleric"):
+      case("3"):
+          player = new Class(0, 10, 5, 9, 10, 2, "cleric");
+          playerAttackA = new playerAttack(0, 1, 1, "divination");
+          playerAttackB = new playerAttack(0.75, 1.5, 3, "curse");
+          playerSpecialAttack = new playerSpecialAttack(0, 0, 3, 5, "fallen angels");
+          classDecision = false;
+          break;
+      case("Meth"):
+      case("meth"):
+      case("420"):
+          player = new Class(0, 10, 5, 5, 9, 3, "meth");
+          playerAttackA = new playerAttack(0, 1.1, 2, "vape");
+          playerAttackB = new playerAttack(1.5, 2, 4, "boil");
+          playerSpecialAttack = new playerSpecialAttack(0, 0, 4, 7, "Game of Thrones binge");
+          classDecision = false;
+          break;
+      default:
+          console.log("Please choose one of the available classes.");
+          break;
+  }
+}
+confirm("Are you ready to begin your adventure, " + player.player + " " + playerName + "?");
+};
+var playerCrit = function(){
+  critChanceVar = Math.random();
+  critChance = critChanceVar * 2 * typePlayerAttack.critChanceMultiplier;
+  if(critChance >= 1){
+      currentDamage = typePlayerAttack.critDamageMultiplier * player.playerAttack;
+  } else {
+      currentDamage = player.playerAttack;
+  }
+  currentDamage = roundInt(currentDamage);
+};
+var playerDeath = function(){
+  overkill = Math.abs(player.playerHealth);
+  player.playerHealth = 0;
+  actionChoice = false;
+  battle = false;
+  playerAlive = false;
+  console.log(currentEnemy.enemyName + " dealt " + (currentDamage - overkill) + " damage to you. You now have 0 health.");
+  console.log("");
+  console.log("Game Over. You were defeated by " + currentEnemy.enemyName + ".");
+};
+var enemyDeath = function(){
+  overkill = Math.abs(currentEnemy.enemyHealth);
+  currentEnemy.enemyHealth = 0;
+  battle = false;
+  facingEnemy = false;
+  console.log("You dealt " + (currentDamage - overkill) + " damage to " + currentEnemy.enemyName + ". It now has 0 health.");
+  console.log("");
+  if(bossBattle){
+      console.log("Great work, " + playerName + "! You have successfully rid the land of one of its many evils, the " + currentEnemy.enemyName + "!");
+      bossBattle = false;
+  } else {
+  console.log("Congratulations! You have slain " + currentEnemy.enemyName + "!");
+  }
+};
+
+var statChange = function(whoStatChange, whichStatChange, quantityStatChange, optionalVar){
+  quantityStatChange = roundInt(quantityStatChange);
+  if(whoStatChange === "player"){
+      switch(whichStatChange){
+          case("attack"):
+              player.playerAttack += quantityStatChange;
+              if(player.playerAttack > optionalVar){
+                  console.log("You are at your maximum attack of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  player.playerAttack = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+              if(player.playerAttack <= 0){
+                  player.playerAttack = 0;
+              } if(quantityStatChange > 0){
+                  console.log("Your attack went up by " + quantityStatChange + ". You now have " + player.playerAttack + " attack total.");
+              } if(quantityStatChange < 0){
+                  console.log("Your attack went down by " + Math.abs(quantityStatChange) + ". You now have " + player.playerAttack + " attack total.");
+              }
+              }
+              break;
+          case("defense"):
+              player.playerDefense += quantityStatChange;
+              if(player.playerDefense > optionalVar){
+                  console.log("You are at your maximum defense of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  player.playerDefense = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+              if(player.playerDefense <= 0){
+                  player.playerDefense = 0;
+              } if(quantityStatChange > 0){
+                  console.log("Your defense went up by " + quantityStatChange + ". You now have " + player.playerDefense + " defense total.");
+              } if(quantityStatChange < 0){
+                  console.log("Your defense went down by " + Math.abs(quantityStatChange) + ". You now have " + player.playerDefense + " defense total.");
+              }
+              }
+              break;
+          case("health"):
+              if(quantityStatChange !== 0){
+              overHeal = 0;
+              if(optionalVar){
+                  quantityStatChange -= player.playerBlock;
+                  if(quantityStatChange <= 0){
+                      quantityStatChange = 0;
+                  }
+                  player.playerHealth -= quantityStatChange;
+                  if(player.playerHealth <= 0){
+                      playerDeath();
+                  } else {
+                  console.log(currentEnemy.enemyName + " dealt " + quantityStatChange + " damage to you. You now have " + player.playerHealth + " health.");
+                  }
+              } else {
+              player.playerHealth += quantityStatChange;
+              if(player.playerHealth > player.playerMaxHealth){
+                  overHeal = player.playerHealth - player.playerMaxHealth;
+                  player.playerHealth = player.playerMaxHealth;
+              } if(player.playerHealth < 0){
+                  playerDeath();
+              } if(quantityStatChange < 0 && player.playerHealth > 0){
+                  console.log("You lost " + (Math.abs(quantityStatChange) - overHeal) + " health. You now have " + player.playerHealth + " health.");
+              } if(quantityStatChange > 0){
+                  console.log("You recovered " + (quantityStatChange - overHeal) + " health. You now have " + player.playerHealth + " health.");
+              }
+              }
+              }
+              break;
+          case("healthRegen"):
+              player.playerHealthRegen += quantityStatChange;
+              if(player.playerHealthRegen > optionalVar){
+                  console.log("You are at your maximum health regeneration of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  player.playerHealthRegen = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+                  if(quantityStatChange < 0){
+                      console.log("You are now taking an extra " + Math.abs(quantityStatChange) + " damage per turn.");
+                  } if(quantityStatChange > 0){
+                      console.log("You are now regenerating an extra " +  quantityStatChange + " health per turn.");
+                  } if(player.playerHealthRegen >= 0){
+                      console.log("You now recover " + player.playerHealthRegen + " health each turn.");
+                  } if(player.playerHealthRegen < 0){
+                      console.log("You now lose " + Math.abs(player.playerHealthRegen) + " health each turn");
+                  }
+              }
+              break;
+          case("manaRegen"):
+              player.playerManaRegen += quantityStatChange;
+              if(player.playerManaRegen > optionalVar){
+                  console.log("You are at your maximum mana regeneration of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  player.playerManaRegen = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+                  if(quantityStatChange < 0){
+                      console.log("You are now losing an extra " + Math.abs(quantityStatChange) + " mana per turn.");
+                  } if(quantityStatChange > 0){
+                      console.log("You are now regenerating an extra " +  quantityStatChange + " mana per turn.");
+                  } if(player.playerManaRegen >= 0){
+                      console.log("You now recover " + player.playerManaRegen + " mana each turn.");
+                  } if(player.playerManaRegen < 0){
+                      console.log("You now lose " + Math.abs(player.playerManaRegen) + " mana each turn");
+                  }
+              }
+              break;
+          case("maxHealth"):
+              player.playerMaxHealth += quantityStatChange;
+              if(quantityStatChange !== 0){
+                  if(quantityStatChange < 0){
+                      console.log("You lost " + Math.abs(quantityStatChange) + " max health point(s). Your max health is now " + player.playerMaxHealth + ".");
+                  } if(quantityStatChange > 0){
+                      console.log("You gained " +  quantityStatChange + " max health point(s). Your max health is now " + player.playerMaxHealth + ".");
+                  } if(player.playerMaxHealth < 0){
+                      playerDeath();
+                  } if(player.playerHealth > player.playerMaxHealth){
+                      player.playerHealth = player.playerMaxHealth;
+                  }
+              }
+              break;
+          case("maxMana"):
+              player.playerMaxMana += quantityStatChange;
+              if(quantityStatChange !== 0){
+                  if(quantityStatChange < 0){
+                      console.log("You lost " + Math.abs(quantityStatChange) + " max mana point(s). Your max mana is now " + player.playerMaxMana + ".");
+                  } if(quantityStatChange > 0){
+                      console.log("You gained " +  quantityStatChange + " max mana point(s). Your max mana is now " + player.playerMaxMana + ".");
+                  } if(player.playerMaxMana < 0){
+                      console.log("You permanently have 0 mana, so you can no longer attack.");
+                      playerDeath();
+                  } if(player.playerMana > player.playerMaxMana){
+                      player.playerMana = player.playerMaxMana;
+                  }
+              }
+              break;
+          case("block"):
+              player.playerBlock += quantityStatChange;
+              if(player.playerBlock <= 0){
+                  player.playerBlock = 0;
+                  console.log("You were unable to defend.");
+              }
+              break;
+          case("mana"):
+              if(quantityStatChange !== 0){
+              overMana = 0;
+              player.playerMana += quantityStatChange;
+              if(player.playerMana > player.playerMaxMana){
+                  overMana = player.playerMana - player.playerMaxMana;
+                  player.playerMana = player.playerMaxMana;
+              } if(player.playerMana < 0){
+                  overMana = Math.abs(player.playerMana);
+                  player.playerMana = 0;
+              } if(quantityStatChange < 0){
+                      console.log("You lost " + (Math.abs(quantityStatChange) - overMana) + " mana. You now have " + player.playerMana + " mana.");
+              } if(quantityStatChange > 0){
+                  console.log("You recovered " + (quantityStatChange - overMana) + " mana. You now have " + player.playerMana + " mana.");
+              }
+              }
+              break;
+      }
+  } else if(whoStatChange === "enemy"){
+      switch(whichStatChange){
+          case("attack"):
+              currentEnemy.enemyAttack += quantityStatChange;
+              if(currentEnemy.enemyAttack > optionalVar){
+                  console.log(currentEnemy.enemyName + " is at its maximum defense of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  currentEnemy.enemyAttack = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+              if(currentEnemy.enemyAttack <= 0){
+                  currentEnemy.enemyAttack = 0;
+              } if(quantityStatChange > 0){
+                  console.log(currentEnemy.enemyName + "'s attack went up by " + quantityStatChange + ". It now has " + currentEnemy.enemyAttack + " attack total.");
+              } if(quantityStatChange < 0){
+                  console.log(currentEnemy.enemyName + "'s attack went down by " + Math.abs(quantityStatChange) + ". It now has " + currentEnemy.enemyAttack + " attack total.");
+              }
+              }
+              break;
+          case("defense"):
+              currentEnemy.enemyDefense += quantityStatChange;
+              if(currentEnemy.enemyDefense > optionalVar){
+                  console.log(currentEnemy.enemyName + " is at its maximum defense of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  currentEnemy.enemyDefense = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+              if(currentEnemy.enemyDefense <= 0){
+                  currentEnemy.enemyDefense = 0;
+              } if(quantityStatChange > 0){
+                  console.log(currentEnemy.enemyName + "'s defense went up by " + quantityStatChange + ". It now has " + currentEnemy.enemyDefense + " defense total.");
+              } if(quantityStatChange < 0){
+                  console.log(currentEnemy.enemyName + "'s defense went down by " + Math.abs(quantityStatChange) + ". It now has " + currentEnemy.enemyDefense + " defense total.");
+              }
+              }
+              break;
+          case("healthRegen"):
+              currentEnemy.enemyHealthRegen += quantityStatChange;
+              if(currentEnemy.enemyHealthRegen > optionalVar){
+                  console.log(currentEnemy.enemyName + " is at its maximum health regeneration of " + optionalVar + ".");
+                  quantityStatChange = 0;
+                  currentEnemy.enemyHealthRegen = optionalVar;
+              }
+              if(quantityStatChange !== 0){
+                  if(quantityStatChange < 0){
+                      console.log(currentEnemy.enemyName + " is now taking an extra " + Math.abs(quantityStatChange) + " damage per turn.");
+                  } if(quantityStatChange > 0){
+                      console.log(currentEnemy.enemyName + " is now regenerating an extra " + quantityStatChange + " health per turn.");
+                  } if(currentEnemy.enemyHealthRegen >= 0){
+                      console.log(currentEnemy.enemyName + " now recovers " + currentEnemy.enemyHealthRegen + " health each turn.");
+                  } if(currentEnemy.enemyHealthRegen < 0){
+                      console.log(currentEnemy.enemyName + " now loses " + Math.abs(currentEnemy.enemyHealthRegen) + " health each turn");
+                  }
+              }
+              break;
+          case("maxHealth"):
+              currentEnemy.enemyMaxHealth += quantityStatChange;
+              if(quantityStatChange !== 0){
+                  if(quantityStatChange < 0){
+                      console.log(currentEnemy.enemyName + " lost " + Math.abs(quantityStatChange) + " max health point(s). Its max health is now " + Math.abs(currentEnemy.enemyMaxHealth) + ".");
+                  } if(quantityStatChange > 0){
+                      console.log(currentEnemy.enemyName + " gained " +  quantityStatChange + " max health point(s). Its max health is now " + currentEnemy.enemyMaxHealth + ".");
+                  } if(currentEnemy.enemyMaxHealth < 0){
+                      enemyDeath();
+                  } if(currentEnemy.enemyHealth > currentEnemy.enemyMaxHealth){
+                      currentEnemy.enemyHealth = currentEnemy.enemyMaxHealth;
+                  }
+              }
+              break;
+          case("block"):
+              currentEnemy.enemyBlock += quantityStatChange;
+              if(currentEnemy.enemyBlock <= 0){
+                  currentEnemy.enemyBlock = 0;
+                  console.log(currentEnemy.enemyName + " was unable to defend.");
+              }
+              break;
+          case("health"):
+              if(quantityStatChange !== 0){
+              overHeal = 0;
+              if(optionalVar){
+                  quantityStatChange -= currentEnemy.enemyBlock;
+                  if(quantityStatChange < 0){
+                      quantityStatChange = 0;
+                  }
+                  currentEnemy.enemyHealth -= quantityStatChange;
+                  if(currentEnemy.enemyHealth <= 0){
+                      enemyDeath();
+                  } else {
+                  console.log("You dealt " + quantityStatChange + " damage to " + currentEnemy.enemyName + ". It now has " + currentEnemy.enemyHealth + " health.");
+                  }
+              } else {
+              currentEnemy.enemyHealth += quantityStatChange;
+              if(currentEnemy.enemyHealth > currentEnemy.enemyMaxHealth){
+                  overHeal = currentEnemy.enemyHealth - currentEnemy.enemyMaxHealth;
+                  currentEnemy.enemyHealth = currentEnemy.enemyMaxHealth;
+              } if(currentEnemy.enemyHealth < 0){
+                  enemyDeath();
+              } if(quantityStatChange < 0 && currentEnemy.enemyHealth > 0){
+                  console.log(currentEnemy.enemyName + " lost " + (Math.abs(quantityStatChange) - overHeal) + " health. It now has " + currentEnemy.enemyHealth + " health.");
+              } if(quantityStatChange > 0){
+                  console.log(currentEnemy.enemyName + " recovered " + (quantityStatChange - overHeal) + " health. It now has " + currentEnemy.enemyHealth + " health.");
+              }
+              }
+              }
+              break;
+      }
+  }
+};
+
+var warriorSpecialAttack = function(){
+  playerCrit();
+  statChange("enemy", "health", currentDamage, true);
+};
+var rangerSpecialAttack = function(){
+  nextDamage = 0;
+  rangerSpecialAttackRandomInt = randomInt(2,4);
+  for(i=1;i<=rangerSpecialAttackRandomInt;i++){
+      playerCrit();
+      nextDamage += currentDamage;
+  }
+  currentDamage = nextDamage;
+  statChange("enemy", "block", currentEnemy.enemyBlock * (rangerSpecialAttackRandomInt - 1));
+  statChange("enemy", "health", currentDamage, true);
+};
+var clericSpecialAttack = function(){
+  statChange("player", "health", 5);
+  statChange("enemy", "healthRegen", -2);
+};
+var methSpecialAttack = function(){
+  statChange("player", "health", 1);
+  statChange("player", "manaRegen", 1);
+};
+var executePlayerSpecialAttack = function(){
+  if(playerSpecialAttack.playerSpecialAttackClass === 1){
+      warriorSpecialAttack();
+  } else if(playerSpecialAttack.playerSpecialAttackClass === 2){
+      rangerSpecialAttack();
+  } else if(playerSpecialAttack.playerSpecialAttackClass === 3){
+      clericSpecialAttack();
+  } else if(playerSpecialAttack.playerSpecialAttackClass === 4){
+      methSpecialAttack();
+  }
+};
+var playerTurn = function(){
+  console.log("");
+  if(player.playerHealth !== player.playerMaxHealth){
+      statChange("player", "health", player.playerHealthRegen);
+  } if(player.playerMana !== player.playerMaxMana){
+      statChange("player", "mana", player.playerManaRegen);
+  }
+  currentDamage = 0;
+  player.playerBlock = player.playerDefense;
+  currentEnemy.enemyBlock = currentEnemy.enemyDefense;
+  var battleInfo = playerName + ", you are facing " + currentEnemy.enemyName + ". It has " + currentEnemy.enemyHealth + " health, " + currentEnemy.enemyAttack + " attack, and " + currentEnemy.enemyDefense + " defense. You currently have " + player.playerHealth + " health, " + player.playerAttack + " attack, " + player.playerDefense + " defense, and " + player.playerMana + " mana.";
+  var actionPrompt = "What will you do, " + playerName + ": " + playerAttackA.playerAttackName + ", " + playerAttackB.playerAttackName + ", " + playerSpecialAttack.playerSpecialAttackName + ", or Bag";
+  console.log(battleInfo);
+  console.log("");
+  actionChoice = true;
+  while(actionChoice){
+      var action = prompt(actionPrompt);
+      switch(action){
+          case(playerAttackA.playerAttackName):
+          case("1"):
+              typePlayerAttack = playerAttackA;
+              if(player.playerMana >= playerAttackA.playerAttackMana){
+              console.log("You used " + playerAttackA.playerAttackName + " and used " + playerAttackA.playerAttackMana + " mana.");
+              playerCrit();
+              statChange("enemy", "health", currentDamage, true);
+              actionChoice = false;
+              player.playerMana -= playerAttackA.playerAttackMana;
+              } else {
+              console.log("Not enough mana.");
+              }
+              break;
+          case(playerAttackB.playerAttackName):
+          case("2"):
+              typePlayerAttack = playerAttackB;
+              if(player.playerMana >= playerAttackB.playerAttackMana){
+              console.log("You used " + playerAttackB.playerAttackName + " and used " + playerAttackB.playerAttackMana + " mana.");
+              playerCrit();
+              statChange("enemy", "health", currentDamage, true);
+              actionChoice = false;
+              player.playerMana -= playerAttackB.playerAttackMana;
+              } else {
+              console.log("Not enough mana.");
+              }
+              break;
+          case(playerSpecialAttack.playerSpecialAttackName):
+          case("3"):
+              typePlayerAttack = playerSpecialAttack;
+              if(player.playerMana >= playerSpecialAttack.playerSpecialAttackMana){
+              console.log("You used " + playerSpecialAttack.playerSpecialAttackName + " and used " + playerSpecialAttack.playerSpecialAttackMana + " mana.");
+              executePlayerSpecialAttack();
+              actionChoice = false;
+              player.playerMana -= playerSpecialAttack.playerSpecialAttackMana;
+              } else {
+              console.log("Not enough mana.");
+              }
+              break;
+          case("bag"):
+          case("4"):
+              console.log("In your bag, you have:");
+              for(var i = 0; i < itemsInBag; i++){
+                  console.log(bag[i]);
+              }
+              console.log("");
+              var itemChoice = prompt("Which item do you want to use?");
+              switch(itemChoice){
+              case("health potion"):
+                  healthPotChoice = prompt("Which type? You have " + smallHealthPotNo + " small health potions, " + mediumHealthPotNo + " medium health potions, and " + largeHealthPotNo + " large health potions.")
+                  switch(healthPotChoice){
+                      case("small health potion"):
+                      case("1"):
+                          playerHeal(5);
+                          break;
+                          case("medium health potion"):
+                      case("2"):
+                          playerHeal(10);
+                          break;
+                          case("large health potion"):
+                      case("3"):
+                          playerHeal(20);
+                          break;
+                      default:
+                          console.log("That is not one of the available options");
+                          break;
+              }
+              break;
+              case("attack buff"):
+                  attackBuff = true;
+                  break;
+              }
+              break;
+          case("suicide"):
+              playerDeath();
+              break;
+          default:
+              console.log("Please choose one of the available options");
+              break;
+      }
+  }
+  console.log("");
+};
+
+var slime = function(){
+  currentEnemy = new Enemy(1, 50, 1, 1, 1, 1.5, 0.67, "Slime", "Regeneration");
+};
+var bat = function(){
+  currentEnemy = new Enemy(0, 30, 5, 0, 1.5, 1.3, 0.67, "Bat", "Vampire Bite");
+  enemyDifficulty += 0.1;
+};
+var goblin = function(){
+  currentEnemy = new Enemy(0, 20, 6, 3, 1.5, 2, 0.67, "Goblin", "Sharpen");
+  enemyDifficulty += 0.2;
+};
+var kingSlime = function(){
+  currentEnemy = new Enemy(3, 500, player.playerDefense, 0, 0.55, 1 + 1 / player.playerDefense, 0.6, "King Slime", "Super Heal");
+};
+var executeEnemySpecialAttack = function(){
+  console.log(currentEnemy.enemyName + " used " + currentEnemy.enemySpecialAttackName + "!");
+  switch(currentEnemy.enemyName){
+      case("Bat"):
+          currentDamage = currentEnemy.enemyCritDamageMultiplier * currentEnemy.enemyAttack;
+          statChange("enemy", "health", ((currentDamage - player.playerBlock)/2));
+          break;
+      case("Slime"):
+          statChange("enemy", "healthRegen", 1, 7);
+          break;
+      case("Goblin"):
+          statChange("enemy", "attack", 1, 9);
+          break;
+      case("King Slime"):
+          statChange("enemy", "health", 25);
+          break;
+  }
+};
+var enemyCrit = function(){
+  critChanceVar = Math.random();
+  critChance = Math.floor(critChanceVar * 2 * currentEnemy.enemySpecialAttack);
+  if(critChance >= 1){
+      executeEnemySpecialAttack();
+  } else {
+      critChanceVar = Math.random();
+      critChance = Math.floor(critChanceVar * 2 * currentEnemy.enemyCritChanceMultiplier);
+      if(critChance >= 1){
+          currentDamage = currentEnemy.enemyCritDamageMultiplier * currentEnemy.enemyAttack;
+      } else {
+          currentDamage = currentEnemy.enemyAttack;
+      }
+  }
+  currentDamage = roundInt(currentDamage);
+};
+var enemyTurn = function(){
+  if(currentEnemy.enemyHealth !== currentEnemy.enemyMaxHealth){
+      statChange("enemy", "health", currentEnemy.enemyHealthRegen);
+  }
+  currentDamage = 0;
+  player.playerBlock = player.playerDefense;
+  currentEnemy.enemyBlock = currentEnemy.enemyDefense;
+  enemyCrit();
+  statChange("player", "health", currentDamage, true);
+};
+
+var executeBattle = function(){
+while(battle){
+  if(battle){
+      playerTurn();
+  }
+  if(battle){
+      enemyTurn();
+  }
+}
+};
+
+var chooseBoss = function(){
+  bossBattle = true;
+  if(enemyKillCounter === bossBattles[0] - 1){
+      kingSlime();
+  }
+  console.log("");
+  console.log(currentEnemy.enemyName + " has challenged you to mortal combat!");
+  console.log("");
+  enemyDifficulty = enemyDifficultyVar * 5;
+};
+var chooseEnemy = function(){
+  battleDifficulty = randomInt(1,3);
+  if(battleDifficulty === 3){
+      battleDifficulty = 1.5;
+  } else if(battleDifficulty === 2){
+      battleDifficulty = 1.25;
+  }
+  enemyDifficulty = battleDifficulty * enemyDifficultyVar;
+  if(enemyDifficulty <= 0.6){
+      enemyDifficultyChoice = randomInt(1,1);
+      if(enemyDifficultyChoice <= 1){
+              slime();
+      } else if(enemyDifficultyChoice <= 2){
+              bat();
+      } else if(enemyDifficultyChoice <= 3){
+              goblin();
+      }
+  } else if(enemyDifficulty <= 1.2){
+      enemyDifficultyChoice = randomInt(2,2);
+      if(enemyDifficultyChoice <= 1){
+              slime();
+      } else if(enemyDifficultyChoice <= 2){
+              bat();
+      } else if(enemyDifficultyChoice <= 3){
+              goblin();
+      }
+  } else if(enemyDifficulty <= 1.8){
+      enemyDifficultyChoice = randomInt(3,3);
+      if(enemyDifficultyChoice <= 1){
+              slime();
+      } else if(enemyDifficultyChoice <= 2){
+              bat();
+      } else if(enemyDifficultyChoice <= 3){
+              goblin();
+      }
+  } else {
+      kingSlime();
+  }
+};
+var enemyEXPandGoldDrop = function(){
+  enemyEXPdrop = roundInt(enemyDifficulty * 10);
+  if(enemyEXPdrop <= 0 || enemyEXPdrop == NaN){
+      enemyEXPdrop = 1;
+  }
+  playerEXP += enemyEXPdrop;
+  enemyGoldDrop = roundInt(enemyDifficulty * randomInt(25, 35));
+  enemyGoldDrop *= roundInt(((((enemyDifficultyVar * 1.25 * 30) / enemyGoldDrop) - 1) / randomInt(1, 5)) + 1);
+  if(enemyGoldDrop == NaN || enemyGoldDrop <= 0){
+      enemyGoldDrop = 10;
+  }
+  playerGold += enemyGoldDrop;
+  if(playerEXP >= levelEXP){
+      playerLevel ++;
+      playerEXP -= levelEXP;
+      levelEXPvar += 5 + levelEXPvarvar;
+      levelEXPvarvar ++;
+      levelEXP += levelEXPvar;
+      console.log(currentEnemy.enemyName + " dropped " + enemyGoldDrop + " gold and " + enemyEXPdrop + " experience. You now have " + playerGold + " gold total.");
+      console.log("You leveled up! You are now level " + playerLevel + ". You have " + playerEXP + "/" + levelEXP + " experience needed to level up again.");
+  } else {
+      console.log(currentEnemy.enemyName + " dropped " + enemyGoldDrop + " gold and " + enemyEXPdrop + " experience. You now have " + playerGold + " gold total and " + playerEXP + "/" + levelEXP + " experience needed to get to level " + (playerLevel + 1) + ".");
+  }
+};
+
+
+
+
+chooseClass();
+
+while(playerAlive){
+  for(i=0;i<bossBattles.length;i++){
+      if(enemyKillCounter === bossBattles[i] - 1){
+          chooseBoss();
+      }
+  }
+  if(!(bossBattle)){
+      chooseEnemy();
+  }
+  battle = true;
+  executeBattle();
+  if(playerAlive){
+  enemyEXPandGoldDrop();
+  console.log("");
+  console.log("");
+  enemyDifficultyVar += 0.1;
+  enemyKillCounter++;
+  }
+}
+console.log("");
+console.log("You defeated " + enemyKillCounter + " enemies total.");
+
+};
+
+dungeonRPG();
+
+
+
+/*var getItem = function(itemType, itemValue1, itemValue2, itemValue3){
+  switch(itemChoice){
+      case("health potion"):
+      case(bagItemNo):
+          healthPotChoice = prompt("Which type? You have " + smallHealthPotNo + " small health potions, " + mediumHealthPotNo + " medium health potions, and " + largeHealthPotNo + " large health potions.")
+          switch(healthPotChoice){
+              case("small health potion"):
+              case("1"):
+                  playerHeal(5);
+                  break;
+                  case("medium health potion"):
+              case("2"):
+                  playerHeal(10);
+                  break;
+                  case("large health potion"):
+              case("3"):
+                  playerHeal(20);
+                  break;
+              default:
+                  console.log("That is not one of the available options");
+                  break;
+          }
+          break;
+      case("attack buff"):
+      case(bagItemNo):
+          attackBuff = true;
+          break;
+  }
+};
+currentEnemyenemyName = "shop";
+
+var getItem = function(item, itemValue1, itemValue2, itemValue3){
+  bag[itemsInBag] = item;
+  itemsInBag++;
+  console.log("You got " + item + " from " + currentEnemyenemyName + ".");
+};
+
+console.log("In your bag, you have:");
+for(var i = 0; i < itemsInBag; i++){
+  console.log(bag[i]);
+}
+console.log("");
+var itemChoice = prompt("Which item do you want to use?");
+
+getItem("Sword of Savagery");
+getItem("Bomb");
+getItem("Potion");
+getItem("Morningstar");
+
+*/
+    </script>
+  </head>
+  <body>
+    "Legit coding"
+  </body>
+</html>
